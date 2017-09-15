@@ -1,5 +1,5 @@
-#ifndef TOKENIZERLAB_TOKEN_H
-#define TOKENIZERLAB_TOKEN_H
+#ifndef SHELLLAB_TOKEN_H
+#define SHELLLAB_TOKEN_H
 
 #include <stddef.h>
 
