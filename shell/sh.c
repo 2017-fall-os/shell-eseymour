@@ -11,7 +11,7 @@ char buffer[BUFLEN];
 char *exitTok[] = {"exit", (char *) 0};
 char *nullTok[] = {(char *) 0};
 
-int main(int argc, char **argv, char **envp) {
+int main(int argc, char *argv[], char *envp[]) {
   for (int keepLooping = 1; keepLooping;) {
     write(STDOUT_FILENO, "$ ", 2);
     size_t bufRead = read(STDIN_FILENO, buffer, BUFLEN);
@@ -30,7 +30,7 @@ int main(int argc, char **argv, char **envp) {
       } else if (fpid == 0) {
         // Child process
         execve(tokens[0], tokens, envp);
-        write(STDERR_FILENO, "Failed to exec.\n", 16);
+        write(STDERR_FILENO, "command not found\n", 18);
         exit(EXIT_FAILURE);
       } else {
         // Parent process

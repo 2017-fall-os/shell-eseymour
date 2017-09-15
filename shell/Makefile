@@ -1,14 +1,14 @@
 CFLAGS = -std=c11 -Wall -Werror -pedantic
 
 .PHONY: all
-all: shell
+all: sh
 
 .PHONY: clean
 clean:
-	rm -rf shell *.o
+	rm -rf sh *.o
 
-shell: shell.o token.o
+sh: sh.o token.o
 
 token.o: token.c token.h
 
-shell.o: shell.c token.h
+sh.o: sh.c token.h
