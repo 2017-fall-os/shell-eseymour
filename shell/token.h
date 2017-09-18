@@ -22,4 +22,4 @@ int tokcmp(char **tok1, char** tok2);
 /* Frees the token vector */
 void freetok(char **tok);
 
-#endif // TOKENIZERLAB_TOKEN_H
+#endif // SHELLLAB_TOKEN_H
