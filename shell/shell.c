@@ -1,25 +1,29 @@
 #include "shell.h"
 
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
-#include "token.h"
+#include <readline/readline.h>
 
-#define BUFLEN 4096
-char buffer[BUFLEN];
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#include "token.h"
 
 char *exitTok[] = {"exit", (char *) 0};
 char *nullTok[] = {(char *) 0};
 
+char *prompt = "$ ";
+
 void shellLoop(char *envp[]) {
   for (int keepLooping = 1; keepLooping;) {
-    write(STDOUT_FILENO, "$ ", 2);
-    size_t bufRead = read(STDIN_FILENO, buffer, BUFLEN);
-    buffer[bufRead - 1] = '\0';
+    char *line = readline(prompt);
 
-    char **tokens = mytok(buffer, ' ');
+    if (line == 0) {
+      break;
+    }
+
+    char **tokens = mytok(line, ' ');
 
     keepLooping = tokcmp(exitTok, tokens);
 
@@ -41,5 +45,6 @@ void shellLoop(char *envp[]) {
     }
 
     freetok(tokens);
+    free(line);
   }
 }
