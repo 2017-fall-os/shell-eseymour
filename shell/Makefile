@@ -2,14 +2,14 @@ CFLAGS = -std=c11 -Wall -Werror -pedantic
 LDLIBS = -lreadline
 
 .PHONY: all
-all: sh
+all: sesh
 
 .PHONY: clean
 clean:
-	rm -rf sh *.o
+	rm -rf sesh *.o
 
-sh: sh.o shell.o token.o
+sesh: sesh.o shell.o token.o
 
-sh.o: sh.c shell.h
+sesh.o: sesh.c shell.h
 shell.o: shell.c shell.h token.h
 token.o: token.c token.h
