@@ -21,6 +21,8 @@ void shellLoop(char *envp[]) {
     char *line = readline(prompt);
 
     if (line == 0) {
+      // Reached EOF exit loop, nothing to clean up
+      write(STDOUT_FILENO, "\n", 1);
       break;
     }
 
