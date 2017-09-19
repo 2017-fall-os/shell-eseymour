@@ -21,33 +21,38 @@ void shellLoop(char *envp[]) {
     char *line = readline(prompt);
 
     if (line == 0) {
-      // Reached EOF exit loop, nothing to clean up
+      // Reached EOF: exit loop, nothing to clean up
       write(STDOUT_FILENO, "\n", 1);
       break;
     }
 
     char **tokens = mytok(line, ' ');
-
-    keepLooping = tokcmp(exitTok, tokens);
-
-    if (keepLooping && tokcmp(tokens, nullTok) != 0) {
-      pid_t fpid = fork();
-      if (fpid < 0) {
-        // Failed to fork
-        write(STDERR_FILENO, "Failed to fork.\n", 16);
-        exit(EXIT_FAILURE);
-      } else if (fpid == 0) {
-        // Child process
-        execve(tokens[0], tokens, envp);
-        write(STDERR_FILENO, "command not found\n", 18);
-        exit(EXIT_FAILURE);
-      } else {
-        // Parent process
-        wait(NULL);
-      }
-    }
+    keepLooping = shellExec(tokens, envp);
 
     freetok(tokens);
     free(line);
   }
+}
+
+int shellExec(char **tokens, char *envp[]) {
+  int isExit = !tokcmp(exitTok, tokens);
+
+  if (!isExit && tokcmp(tokens, nullTok) != 0) {
+    pid_t fpid = fork();
+    if (fpid < 0) {
+      // Failed to fork
+      write(STDERR_FILENO, "Failed to fork.\n", 16);
+      exit(EXIT_FAILURE);
+    } else if (fpid == 0) {
+      // Child process
+      execve(tokens[0], tokens, envp);
+      write(STDERR_FILENO, "command not found\n", 18);
+      exit(EXIT_FAILURE);
+    } else {
+      // Parent process
+      wait(NULL);
+    }
+  }
+
+  return !isExit;
 }
