@@ -82,20 +82,21 @@ char * tokcpy(char *dest, const char *src, char delim) {
   return dest;
 }
 
+/* Compares to strings, returning 0 if they are the same */
+int stringcmp(const char *str1, const char* str2) {
+  while (*str1 == *str2 && *str1 != '\0') {
+    ++str1;
+    ++str2;
+  }
+
+  return *str1 - *str2;
+}
+
 /* Compares two token vectors returning 0 if they are the same */
 int tokcmp(char **tok1, char** tok2) {
   for (; *tok1 != 0 && *tok2 != 0; ++tok1, ++tok2) {
-    const char *str1 = *tok1;
-    const char *str2 = *tok2;
-
-    for (; *str1 != 0 && *str2 != 0; ++str1, ++str2) {
-      if (*str1 != *str2) {
-        return *str1 - *str2;
-      }
-    }
-    if (*str1 != *str2) {
-      return *str1 - *str2;
-    }
+    int result = stringcmp(*tok1, *tok2);
+    if (result != 0) return result;
   }
 
   return  *tok1 == *tok2 ? 0 : *tok1 < *tok2 ? -1 : 1;
