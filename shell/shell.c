@@ -80,7 +80,11 @@ int shellExec(char **tokens, char *envp[]) {
       exit(EXIT_FAILURE);
     } else {
       // Parent process
-      wait(NULL);
+      int status;
+      wait(&status);
+      if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
+        fprintf(stderr, "program terminated with exit code: %d\n", WEXITSTATUS(status));
+      }
     }
   }
 
