@@ -77,7 +77,7 @@ int shellExec(char **tokens, char *envp[]) {
       }
       execve(tokens[0], tokens, envp);
       write(STDERR_FILENO, "command not found\n", 18);
-      exit(EXIT_FAILURE);
+      exit(EXIT_SUCCESS);
     } else {
       // Parent process
       int status;
