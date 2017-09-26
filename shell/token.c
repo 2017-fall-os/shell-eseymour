@@ -5,6 +5,8 @@
 #include <stdbool.h> // for false
 #include <stdlib.h> // for free
 
+#include "stringutils.h"
+
 /* Tokenizes the str delimited by delim. Returns a zero terminated array
  * of token strings. */
  char ** mytok(const char *str, char delim) {
@@ -82,15 +84,6 @@ char * tokcpy(char *dest, const char *src, char delim) {
   return dest;
 }
 
-/* Compares to strings, returning 0 if they are the same */
-int stringcmp(const char *str1, const char* str2) {
-  while (*str1 == *str2 && *str1 != '\0') {
-    ++str1;
-    ++str2;
-  }
-
-  return *str1 - *str2;
-}
 
 /* Compares two token vectors returning 0 if they are the same */
 int tokcmp(char **tok1, char** tok2) {

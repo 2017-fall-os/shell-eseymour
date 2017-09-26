@@ -16,9 +16,6 @@ size_t toklen(const char *str, char delim);
 /* Copies the characters of the token starting at delim */
 char * tokcpy(char *dest, const char *src, char delim);
 
-/* Compares to strings, returning 0 if they are the same */
-int stringcmp(const char *str1, const char *str2);
-
 /* Compares two token vectors returning 0 if they are the same */
 int tokcmp(char **tok1, char** tok2);
 

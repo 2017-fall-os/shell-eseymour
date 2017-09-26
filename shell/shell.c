@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "stringutils.h"
 #include "token.h"
 
 char *exitTok[] = {"exit", (char *) 0};
@@ -62,10 +63,10 @@ int shellExec(char **tokens, char *envp[]) {
       exit(EXIT_FAILURE);
     } else if (fpid == 0) {
       // Child process
-      size_t commandLen = toklen(tokens[0], '\0');
+      size_t commandLen = stringlen(tokens[0]);
       for (char **pathTok = getPathTok(envp); *pathTok != 0; pathTok++) {
         char *curPath = *pathTok;
-        size_t curPathLen = toklen(curPath, '\0');
+        size_t curPathLen = stringlen(curPath);
         curPath = realloc(curPath, curPathLen + commandLen + 2);
 
         curPath[curPathLen] = '/';

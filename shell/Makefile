@@ -8,8 +8,9 @@ all: sesh
 clean:
 	rm -rf sesh *.o
 
-sesh: sesh.o shell.o token.o
+sesh: sesh.o shell.o stringutils.o token.o
 
 sesh.o: sesh.c shell.h
-shell.o: shell.c shell.h token.h
-token.o: token.c token.h
+shell.o: shell.c shell.h stringutils.h token.h
+stringutils.o: stringutils.c stringutils.h
+token.o: token.c token.h stringutils.h
