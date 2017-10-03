@@ -19,19 +19,20 @@ char *prompt = "$ ";
 
 char ** getPathTok(char *envp[]) {
   for (; *envp != 0; envp++) {
-    char **varTok = mytok(*envp, '=');
+    char **varTok = tokenize(*envp, '=');
 
     if (stringcmp(varTok[0], "PATH") == 0) {
-      char **pathTok = mytok(varTok[1], ':');
-      freetok(varTok);
+      char **pathTok = tokenize(varTok[1], ':');
+      tokenFree(varTok);
       return pathTok;
     }
 
-    freetok(varTok);
+    tokenFree(varTok);
   }
 
   write(STDERR_FILENO, "PATH enviornment variable not defined\n", 38);
-  exit(EXIT_FAILURE);
+  // Return empty path
+  return (char **) calloc(sizeof(char **), 1);
 }
 
 void shellLoop(char *envp[]) {
@@ -40,22 +41,22 @@ void shellLoop(char *envp[]) {
 
     if (line == 0) {
       // Reached EOF: exit loop, nothing to clean up
-      write(STDOUT_FILENO, "\n", 1);
+      //write(STDIN_FILENO, "\n", 1);
       break;
     }
 
-    char **tokens = mytok(line, ' ');
+    char **tokens = tokenize(line, ' ');
     keepLooping = shellExec(tokens, envp);
 
-    freetok(tokens);
+    tokenFree(tokens);
     free(line);
   }
 }
 
 int shellExec(char **tokens, char *envp[]) {
-  int isExit = !tokcmp(exitTok, tokens);
+  int isExit = !tokenCmp(exitTok, tokens);
 
-  if (!isExit && tokcmp(tokens, nullTok) != 0) {
+  if (!isExit && tokenCmp(tokens, nullTok) != 0) {
     pid_t fpid = fork();
     if (fpid < 0) {
       // Failed to fork
