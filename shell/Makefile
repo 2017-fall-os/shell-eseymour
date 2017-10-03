@@ -6,7 +6,7 @@ all: sesh
 
 .PHONY: clean
 clean:
-	rm -rf sesh *.o
+	rm -rf sesh testLog.txt *.o
 
 sesh: sesh.o builtin.o shell.o stringutils.o token.o
 
