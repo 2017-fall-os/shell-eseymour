@@ -95,6 +95,15 @@ char * tokenCpy(char *dest, const char *src, char delim) {
   return dest;
 }
 
+/* Computes the length of the token */
+size_t tokenLen(char **tok) {
+  size_t length = 0;
+  for (; *tok != NULL; ++tok) {
+    ++length;
+  }
+
+  return length;
+}
 
 /* Compares two token vectors returning 0 if they are the same */
 int tokenCmp(char **tok1, char** tok2) {
