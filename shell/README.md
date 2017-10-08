@@ -49,6 +49,14 @@ $ pwd
 /path/to/home/shell-lab
 ```
 
+Pipes work as expected:
+
+```
+$ ls | sort -r
+sesh
+hello
+```
+
 To exit, run the built-in command exit. Sending an EOF also works.
 
 ```
@@ -84,7 +92,7 @@ sh$
 
 - [x] simple commands (e.g. `$ /bin/ls` or `$ ls` )
 
-- [ ] simple pipes (e.g. `$ /bin/ls | /bin/sort -r`)
+- [x] simple pipes (e.g. `$ /bin/ls | /bin/sort -r`)
 
 - [ ] background tasks (e.g. `$ find /etc -print &`)
 
