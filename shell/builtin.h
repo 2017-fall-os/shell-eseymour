@@ -1,11 +1,12 @@
 #ifndef SHELLLAB_BUILTIIN_H
 #define SHELLLAB_BUILTIIN_H
 
-typedef struct {
-  char *commandName;
-  int (*commandFunc)(int, char **, char **);
-} Command;
+/* A builtin function takes in the same arguments as main. */
+typedef int (*BuiltinFunc)(int, char **, char **);
 
-extern Command builtins[];
+/* Searches builtin command vector for command matching the string commandName.
+ * If a matching command is found, a function that excecutes that command is
+ * returned. If no matching command is found, NULL is returned instead. */
+BuiltinFunc getBuiltinFunc(char *commandName);
 
 #endif
