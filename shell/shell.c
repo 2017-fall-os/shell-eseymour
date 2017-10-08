@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "builtin.h"
 #include "stringutils.h"
 #include "token.h"
 
@@ -36,7 +37,7 @@ char ** getPathTok(char *envp[]) {
 }
 
 void shellLoop(char *envp[]) {
-  for (int keepLooping = 1; keepLooping;) {
+  for (;;) {
     char *line = readline(prompt);
 
     if (line == 0) {
@@ -46,17 +47,24 @@ void shellLoop(char *envp[]) {
     }
 
     char **tokens = tokenize(line, ' ');
-    keepLooping = shellExec(tokens, envp);
+    shellExec(tokens, envp);
 
     tokenFree(tokens);
     free(line);
   }
 }
 
-int shellExec(char **tokens, char *envp[]) {
-  int isExit = !tokenCmp(exitTok, tokens);
+void shellExec(char **tokens, char *envp[]) {
+  if (tokenCmp(tokens, nullTok) != 0) {
+    // Check if builtin
+    BuiltinFunc builtin = getBuiltinFunc(tokens[0]);
+    if (builtin != NULL) {
+      // Excecute builtin function and return
+      builtin(tokenLen(tokens), tokens, envp);
 
-  if (!isExit && tokenCmp(tokens, nullTok) != 0) {
+      return;
+    }
+
     pid_t fpid = fork();
     if (fpid < 0) {
       // Failed to fork
@@ -89,6 +97,4 @@ int shellExec(char **tokens, char *envp[]) {
       }
     }
   }
-
-  return !isExit;
 }
