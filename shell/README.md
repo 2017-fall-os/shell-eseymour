@@ -8,18 +8,18 @@ To build, run make in your shell.
 make
 ```
 
-There is no separate debug and release versions in this shell
+There are no separate debug and release versions for this shell
 
 ## Usage
 
-To run the shell
+To run the shell:
 
 ```
 sh$ ./sesh
 $ 
 ```
 
-To run commands, it also searches the PATH
+To run commands, searching the PATH:
 
 ```
 $ /bin/ls
@@ -28,20 +28,32 @@ $ ls
 hello
 $ ./hello
 Hello, world!
+$ ./hello Edward
+Hello, Edward!
 ```
 
-When programs returns a non-zero exit code, it prints it out
+When programs returns a non-zero exit code, it prints it out.
 
 ```
 $ false
 program terminated with exit code: 1
 ```
 
-To exit, run the built-in command exit, EOF also works
+The builtin `cd` also works as expected:
+
+```
+$ pwd
+/path/to/home/shell-lab/shell
+$ cd ..
+$ pwd
+/path/to/home/shell-lab
+```
+
+To exit, run the built-in command exit. Sending an EOF also works.
 
 ```
 $ exit
-sh$
+sh$ 
 ```
 
 ## Progress
@@ -68,13 +80,17 @@ sh$
 
 ### Part 2
 
+#### Required
+
 - [x] simple commands (e.g. `$ /bin/ls` or `$ ls` )
 
 - [ ] simple pipes (e.g. `$ /bin/ls | /bin/sort -r`)
 
 - [ ] background tasks (e.g. `$ find /etc -print &`)
 
-- [ ] `cd [dir]` for `cd` you will need to lookup the library routine `chdir(2)`
+- [x] `cd [dir]` for `cd` you will need to lookup the library routine `chdir(2)`
+
+#### Undergrad Optional
 
 - [ ] redirecting input and output (e.g. `$ ls > /tmp/files.txt`)
 
@@ -83,6 +99,8 @@ sh$
 - [ ] expanding `~` at the beginning of a parameter
 
 - [ ] expanding non-embedded environment variables (e.g. `echo $PATH`)
+
+#### Optional
 
 - [x] command line editing using ` readline(3)`
 
