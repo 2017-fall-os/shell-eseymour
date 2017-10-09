@@ -14,13 +14,10 @@
 #include "stringutils.h"
 #include "token.h"
 
-char *exitTok[] = {"exit", (char *) 0};
-char *nullTok[] = {(char *) 0};
-
 char *prompt = "$ ";
 
 char ** getPathTok(char *envp[]) {
-  for (; *envp != 0; envp++) {
+  for (; *envp != NULL; envp++) {
     char **varTok = tokenize(*envp, '=');
 
     if (stringcmp(varTok[0], "PATH") == 0) {
@@ -32,7 +29,6 @@ char ** getPathTok(char *envp[]) {
     tokenFree(varTok);
   }
 
-  write(STDERR_FILENO, "PATH enviornment variable not defined\n", 38);
   // Return empty path
   return (char **) calloc(sizeof(char **), 1);
 }
@@ -41,7 +37,7 @@ void shellLoop(char *envp[]) {
   for (;;) {
     char *line = readline(prompt);
 
-    if (line == 0) {
+    if (line == NULL) {
       // Reached EOF: exit loop, nothing to clean up
       if (isatty(STDIN_FILENO)) write(STDOUT_FILENO, "\n", 1);
       break;
@@ -84,6 +80,8 @@ void shellExec(char **commands, char *envp[]) {
   // Excecute last command without opening a pipe
   char **args = tokenize(commands[numCommands - 1], ' ');
   size_t argc = tokenLen(args);
+
+  // Check if background command
   if (stringcmp(args[argc - 1], "&") == 0) {
     runInBackground = true;
     free(args[argc - 1]);
@@ -93,6 +91,7 @@ void shellExec(char **commands, char *envp[]) {
   pid_t lastPid = shellCommandExec(args, envp, infile, -1);
   tokenFree(args);
 
+  // Close last infile
   if (infile != -1) close(infile);
 
   if (!runInBackground) {
@@ -121,8 +120,9 @@ void shellExec(char **commands, char *envp[]) {
 }
 
 pid_t shellCommandExec(char **args, char *envp[], int indes, int outdes) {
+  // Look for builtin if exists
   BuiltinFunc builtin = getBuiltinFunc(args[0]);
-  if (builtin != NULL) {
+  if (builtin) {
     // Is a builtin function, excecute and return negative exit condition
     return -builtin(tokenLen(args), args, envp);
   }
@@ -137,7 +137,7 @@ pid_t shellCommandExec(char **args, char *envp[], int indes, int outdes) {
   else if (fpid == 0) {
     // Child process
 
-    // Change descripors if necessary
+    // Change descriptors if necessary
     if (indes != -1) {
       dup2(indes, STDIN_FILENO);
       close(indes);
@@ -161,6 +161,8 @@ pid_t shellCommandExec(char **args, char *envp[], int indes, int outdes) {
 
       execve(curPath, args, envp);
     }
+
+    // Check current directory
     execve(args[0], args, envp);
     write(STDERR_FILENO, "command not found\n", 18);
     exit(EXIT_SUCCESS);
