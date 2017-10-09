@@ -3,22 +3,16 @@
 /* Copy at most n characters of string src to dest; return dest. Pad with '\0'
    if src has fewer than n characters. */
 char * stringncpy(char *dest, const char *src, size_t n) {
-  char *curChar = dest;
+  size_t i;
 
   // Copy src into dest
-  while (n > 0 && *src != '\0') {
-    *curChar = *src;
-
-    ++curChar;
-    ++src;
-    --n;
+  for (i = 0; i < n && src[i] != '\0'; ++i) {
+    dest[i] = src[i];
   }
 
   // Pad rest of dest with '\0'
-  while (n > 0) {
-    *curChar = '\0';
-
-    --n;
+  for (; i < n; ++i) {
+    dest[i] = '\0';
   }
 
   return dest;
@@ -26,22 +20,16 @@ char * stringncpy(char *dest, const char *src, size_t n) {
 
 /* Concatenate string src to the end of string dest; return dest. */
 char * stringcat(char *dest, const char *src) {
-  char *curChar = dest;
-
-  // Seek to end of dest
-  while (*curChar != '\0') {
-    ++curChar;
-  }
+  size_t i;
+  size_t destLen = stringlen(dest);
 
   // Concatenate src
-  while (*src != '\0') {
-    *curChar = *src;
-    ++curChar;
-    ++src;
+  for (i = 0; src[i] != '\0'; ++i) {
+    dest[destLen + i] = src[i];
   }
 
   // Terminate string
-  *curChar = '\0';
+  dest[destLen+i] = '\0';
 
   return dest;
 }
@@ -49,17 +37,17 @@ char * stringcat(char *dest, const char *src) {
 /* Compare str1 to str2; return < 0 if str1 < str2, 0 if str1 == str2 or > 0 if
    str1 > str2. */
 int stringcmp(const char *str1, const char *str2) {
-  while (*str1 == *str2 && *str1 != '\0') {
-    ++str1;
-    ++str2;
-  }
+  size_t i;
 
-  return *str1 - *str2;
+  // Seek until different char or end of string
+  for (i = 0; str1[i] == str2[i] && str1[i] != '\0'; i++);
+
+  return str1[i] - str2[i];
 }
 
 /* Return length of str */
 size_t stringlen(const char *str) {
-  int length = 0;
+  size_t length = 0;
 
   while (*str != '\0') {
     ++str;
