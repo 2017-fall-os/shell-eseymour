@@ -43,7 +43,7 @@ void shellLoop(char *envp[]) {
 
     if (line == 0) {
       // Reached EOF: exit loop, nothing to clean up
-      //write(STDIN_FILENO, "\n", 1);
+      if (isatty(STDIN_FILENO)) write(STDOUT_FILENO, "\n", 1);
       break;
     }
 
