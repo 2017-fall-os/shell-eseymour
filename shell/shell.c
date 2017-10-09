@@ -1,5 +1,6 @@
 #include "shell.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -56,8 +57,9 @@ void shellLoop(char *envp[]) {
 
 void shellExec(char **commands, char *envp[]) {
   int numCommands = tokenLen(commands);
+  bool runInBackground = false;
 
-  if (numCommands <= 1 && strNumTokens(commands[0], ' ') == 0) {
+  if ((numCommands == 1 && strNumTokens(commands[0], ' ') == 0) || numCommands == 0) {
     // No command typed in.
     return;
   }
@@ -81,31 +83,40 @@ void shellExec(char **commands, char *envp[]) {
 
   // Excecute last command without opening a pipe
   char **args = tokenize(commands[numCommands - 1], ' ');
+  size_t argc = tokenLen(args);
+  if (stringcmp(args[argc - 1], "&") == 0) {
+    runInBackground = true;
+    free(args[argc - 1]);
+    args[argc - 1] = NULL;
+  }
+
   pid_t lastPid = shellCommandExec(args, envp, infile, -1);
   tokenFree(args);
 
   if (infile != -1) close(infile);
 
-  int exitStatus;
-  if (lastPid > 0) {
-    // Last command was an external program
-    int status;
-    waitpid(lastPid, &status, 0);
-    if (WIFEXITED(status)) {
-      exitStatus = WEXITSTATUS(status);
+  if (!runInBackground) {
+    int exitStatus;
+    if (lastPid > 0) {
+      // Last command was an external program
+      int status;
+      waitpid(lastPid, &status, 0);
+      if (WIFEXITED(status)) {
+        exitStatus = WEXITSTATUS(status);
+      }
+      else {
+        // Did not exit, use a different exit status
+        exitStatus = -1;
+      }
     }
     else {
-      // Did not exit, use a different exit status
-      exitStatus = -1;
+      // Last command was a builtin
+      exitStatus = -lastPid;
     }
-  }
-  else {
-    // Last command was a builtin
-    exitStatus = -lastPid;
-  }
 
-  if (exitStatus != 0) {
-    fprintf(stderr, "command terminated with exit code: %d\n", exitStatus);
+    if (exitStatus != 0) {
+      fprintf(stderr, "command terminated with exit code: %d\n", exitStatus);
+    }
   }
 }
 
