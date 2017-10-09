@@ -1,5 +1,6 @@
 #include "shell.h"
 
+#include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,10 +70,6 @@ void shellExec(char **commands, char *envp[]) {
     char **args = tokenize(commands[i], ' ');
     shellCommandExec(args, envp, infile, pipedes[1]);
     tokenFree(args);
-    
-    // Close left side of pipe and last input file
-    close(pipedes[1]);
-    if (infile != -1) close(infile);
 
     infile = pipedes[0];
   }
@@ -90,9 +87,6 @@ void shellExec(char **commands, char *envp[]) {
 
   pid_t lastPid = shellCommandExec(args, envp, infile, -1);
   tokenFree(args);
-
-  // Close last infile
-  if (infile != -1) close(infile);
 
   if (!runInBackground) {
     int exitStatus;
@@ -120,11 +114,49 @@ void shellExec(char **commands, char *envp[]) {
 }
 
 pid_t shellCommandExec(char **args, char *envp[], int indes, int outdes) {
+  // Look for redirects
+  int argc = tokenLen(args);
+  for (int i = 0; i < argc; i++) {
+    // Check for enough room for redirection and filename
+    if (i < argc - 1 && stringcmp("<", args[i]) == 0) {
+      // Input redirection
+      if (indes != -1) close(indes);
+      indes = open(args[i + 1], O_RDONLY);
+
+      // Remove from args
+      free(args[i]);
+      free(args[i+1]);
+      argc -= 2;
+      for (int j = i; j < argc; j++) {
+        args[j] = args[j+2];
+      }
+
+      args[argc] = NULL;
+    }
+
+    // Check for enough room for redirection and filename
+    if (i < argc - 1 && stringcmp(">", args[i]) == 0) {
+      // Output redirection
+      if (outdes != -1) close(outdes);
+      outdes = open(args[i + 1], O_WRONLY);
+
+      // Remove from args
+      free(args[i]);
+      free(args[i+1]);
+      argc -= 2;
+      for (int j = i; j < argc; j++){
+        args[j] = args[j+2];
+      }
+
+      args[argc] = NULL;
+    }
+  }
+
   // Look for builtin if exists
   BuiltinFunc builtin = getBuiltinFunc(args[0]);
   if (builtin) {
     // Is a builtin function, excecute and return negative exit condition
-    return -builtin(tokenLen(args), args, envp);
+    return -builtin(argc, args, envp);
   }
 
   // Not a builtin function
@@ -168,5 +200,8 @@ pid_t shellCommandExec(char **args, char *envp[], int indes, int outdes) {
     exit(EXIT_SUCCESS);
   }
   
+  if (indes != -1) close(indes);
+  if (outdes != -1) close(outdes);
+
   return fpid;
 }
