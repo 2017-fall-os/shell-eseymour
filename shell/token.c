@@ -52,7 +52,7 @@ size_t strNumTokens(const char *str, char delim) {
 size_t numTokens(char **tok) {
   size_t count = 0;
 
-  for (size_t i; tok[i] != NULL; ++i) {
+  for (size_t i = 0; tok[i] != NULL; ++i) {
     ++count;
   }
 
@@ -88,7 +88,7 @@ char * tokenCpy(char *dest, const char *src, char delim) {
 size_t tokenLen(char **tok) {
   size_t length = 0;
 
-  for (size_t i; tok[i] != NULL; ++i) {
+  for (size_t i = 0; tok[i] != NULL; ++i) {
     ++length;
   }
 
