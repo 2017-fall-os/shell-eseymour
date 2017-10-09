@@ -1,4 +1,4 @@
-CFLAGS = -std=c11 -Wall -Werror -pedantic -D_POSIX_SOURCE
+CFLAGS = -std=c99 -Wall -Werror -pedantic -D_POSIX_SOURCE
 LDLIBS = -lreadline
 
 .PHONY: all
