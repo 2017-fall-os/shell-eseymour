@@ -40,7 +40,7 @@ int stringcmp(const char *str1, const char *str2) {
   size_t i;
 
   // Seek until different char or end of string
-  for (i = 0; str1[i] == str2[i] && str1[i] != '\0'; i++);
+  for (i = 0; str1[i] == str2[i] && str1[i] != '\0'; ++i);
 
   return str1[i] - str2[i];
 }
