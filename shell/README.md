@@ -57,6 +57,13 @@ sesh
 hello
 ```
 
+Running commands in the backround is like bash, but they don't create jobs:
+
+```
+$ sleep 1 &
+$ 
+```
+
 To exit, run the built-in command exit. Sending an EOF also works.
 
 ```
@@ -94,7 +101,7 @@ sh$
 
 - [x] simple pipes (e.g. `$ /bin/ls | /bin/sort -r`)
 
-- [ ] background tasks (e.g. `$ find /etc -print &`)
+- [x] background tasks (e.g. `$ find /etc -print &`)
 
 - [x] `cd [dir]` for `cd` you will need to lookup the library routine `chdir(2)`
 
