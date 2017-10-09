@@ -1,7 +1,6 @@
 // Edward Seymour 2017
 #include "token.h"
 
-#include <assert.h> // for assert
 #include <stdbool.h> // for false
 #include <stdlib.h> // for free
 
@@ -29,14 +28,6 @@
     // Jump one element past end of token
     str += tokenLength;
   }
-
-  // No tokens should be left
-  #ifndef NDEBUG
-  // Skip past any remaining delimiters
-  for (; *str == delim; ++str);
-
-  assert(*str == '\0');
-  #endif // NDEBUG
 
   return tokens;
 }
@@ -70,9 +61,8 @@ size_t numTokens(char **tok) {
 
 /* Computes the length of the token starting at str */
 size_t strTokenLen(const char *str, char delim) {
-  assert(*str != delim && *str != '\0');
-
   size_t tokenLength = 0;
+
   for (; *str != '\0' && *str != delim; ++str) {
     ++tokenLength;
   }
@@ -82,9 +72,8 @@ size_t strTokenLen(const char *str, char delim) {
 
 /* Copies the characters of the token starting at delim */
 char * tokenCpy(char *dest, const char *src, char delim) {
-  assert(*src != delim && *src != '\0');
-
   char *destCursor = dest;
+
   for (; *src != '\0' && *src != delim; ++src, ++destCursor) {
     *destCursor = *src;
   }
@@ -98,6 +87,7 @@ char * tokenCpy(char *dest, const char *src, char delim) {
 /* Computes the length of the token */
 size_t tokenLen(char **tok) {
   size_t length = 0;
+
   for (; *tok != NULL; ++tok) {
     ++length;
   }
