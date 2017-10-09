@@ -1,14 +1,14 @@
 // Edward Seymour 2017
 #include "token.h"
 
-#include <stdbool.h> // for false
+#include <stdbool.h> // for bool, false
 #include <stdlib.h> // for free
 
 #include "stringutils.h"
 
 /* Tokenizes the str delimited by delim. Returns a zero terminated array
  * of token strings. */
- char ** tokenize(const char *str, char delim) {
+char ** tokenize(const char *str, char delim) {
   // First pass: calculate the number of tokens.
   size_t numTokens = strNumTokens(str, delim);
 
@@ -36,7 +36,7 @@
 size_t strNumTokens(const char *str, char delim) {
   size_t count = 0;
 
-  for (int inToken = false; *str != '\0'; ++str) {
+  for (bool inToken = false; *str != '\0'; ++str) {
     if (*str != delim && !inToken) {
       // Found beginning of token
       ++count;
@@ -52,7 +52,7 @@ size_t strNumTokens(const char *str, char delim) {
 size_t numTokens(char **tok) {
   size_t count = 0;
 
-  for (; *tok != NULL; ++tok) {
+  for (size_t i; tok[i] != NULL; ++i) {
     ++count;
   }
 
@@ -63,7 +63,7 @@ size_t numTokens(char **tok) {
 size_t strTokenLen(const char *str, char delim) {
   size_t tokenLength = 0;
 
-  for (; *str != '\0' && *str != delim; ++str) {
+  for (size_t i = 0; str[i] != '\0' && str[i] != delim; ++i) {
     ++tokenLength;
   }
 
@@ -72,14 +72,14 @@ size_t strTokenLen(const char *str, char delim) {
 
 /* Copies the characters of the token starting at delim */
 char * tokenCpy(char *dest, const char *src, char delim) {
-  char *destCursor = dest;
+  size_t i;
 
-  for (; *src != '\0' && *src != delim; ++src, ++destCursor) {
-    *destCursor = *src;
+  for (i = 0; src[i] != '\0' && src[i] != delim; ++i) {
+    dest[i] = src[i];
   }
 
   // Null-terminate string
-  *(destCursor) = '\0';
+  dest[i] = '\0';
 
   return dest;
 }
@@ -88,7 +88,7 @@ char * tokenCpy(char *dest, const char *src, char delim) {
 size_t tokenLen(char **tok) {
   size_t length = 0;
 
-  for (; *tok != NULL; ++tok) {
+  for (size_t i; tok[i] != NULL; ++i) {
     ++length;
   }
 
@@ -108,8 +108,8 @@ int tokenCmp(char **tok1, char** tok2) {
 /* Frees the token vector */
 void tokenFree(char **tok) {
   // Free token strings in vector
-  for (char **tokCursor = tok; *tokCursor != 0; ++tokCursor) {
-    free(*tokCursor);
+  for (size_t i = 0; tok[i] != NULL; ++i) {
+    free(tok[i]);
   }
 
   free(tok);
